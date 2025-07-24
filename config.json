@@ -1,12 +1,18 @@
 {
-  "map_size": [500, 500],
-  "big_drone_range": [1, 20],
+  "map_size": [1000, 1000],
+  "small_drone_range": [1, 50],
+  "big_drone_range": [1, 50],
   "small_drone_multiplier_range": [1, 10],
   "drone_speed": 1,
   "energy_per_second": 10,
+  "big_drone_travel_energy": 30,
   "energy_per_detection": 5,
   "energy_per_action": 50,
-  "small_drone_detection_range": 5,
+  "small_drone_detection_range": 3,
+  "num_pois": 50,
+  "num_obstacles": 50,
+  "obstacle_min_radius": 10,
+  "obstacle_max_radius": 30,
   "pois_file": "pois.json",
   "obstacles_file": "obstacles.json"
 } 

@@ -67,7 +67,8 @@ ENERGY_PER_ACTION = config.get('energy_per_action', 50)
 DRONE_SPEED = config['drone_speed']
 SMALL_DETECTION_RANGE = config.get('small_drone_detection_range', 5)
 REGION_MARGIN = 2  # pixels
-BIG_DRONE_TRAVEL_ENERGY = 20
+BIG_DRONE_TRAVEL_ENERGY = config.get('big_drone_travel_energy', 20)
+SMALL_DRONE_RANGE = config.get('small_drone_range', [1, 20])
 
 controller_pos = {'x': MAP_W/2, 'y': MAP_H/2}
 
@@ -128,8 +129,7 @@ def path_length(path):
 def main():
     results = []
     for num_big in range(config['big_drone_range'][0], config['big_drone_range'][1]+1):
-        for mult in range(config['small_drone_multiplier_range'][0], config['small_drone_multiplier_range'][1]+1):
-            num_small = num_big * mult
+        for num_small in range(SMALL_DRONE_RANGE[0], SMALL_DRONE_RANGE[1]+1):
             if num_small == 0:
                 continue
             rows, cols = compute_grid(num_big)
