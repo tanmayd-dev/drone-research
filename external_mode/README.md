@@ -15,7 +15,9 @@ In External Mode, an external controller collects all detected POIs from the sma
 4. **Big Drone Path Optimization:**
    - Each big drone visits its assigned POIs using a TSP+2opt optimized path, starting and ending at the cluster center (simulation) or top left (main calculation).
 5. **Energy Calculation:**
-   - Total energy is the sum of all movement and detection energy for all drones, plus action energy for each POI visited by a big drone.
+   - **Small drones:** Travel energy is set by `energy_per_second` in the config (default 10).
+   - **Big drones:** Travel energy is set to 20 per second of movement (hardcoded in the code).
+   - Detection and action energy are as specified in the config.
 
 ## How to Run
 1. Ensure you have Python 3 installed.

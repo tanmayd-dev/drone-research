@@ -18,7 +18,11 @@ In Independent Mode, big drones are distributed evenly across the map. Each big 
    - After all small drones return, each big drone visits all POIs detected by its small drones (in order).
    - Energy is consumed for movement.
 5. **Energy Calculation:**
-   - Total energy is the sum of all movement and detection energy for all drones.
+   - **Small drones:** Travel energy is set by `energy_per_second` in the config (default 10).
+   - **Big drones:** Travel energy is also set by `energy_per_second` in the config (default 10).
+   - Detection and action energy are as specified in the config.
+
+**Note:** In external mode, big drone travel energy is set to 20 for comparison.
 
 ## How to Run
 1. Ensure you have Python 3 installed.
