@@ -3,6 +3,7 @@ import csv
 import os
 import math
 import random
+from sklearn.cluster import KMeans
 
 def dist(a, b):
     return math.hypot(a['x'] - b['x'], a['y'] - b['y'])
@@ -204,10 +205,21 @@ def main():
                                     detected_pois.append(poi)
                                 total_energy += ENERGY_PER_DETECTION
                                 break
-            # EXTERNAL MODE: An external controller collects all detected POIs and assigns big drones using k-means clustering and TSP+2opt pathing
-            if detected_pois:
+            # 2. K-means clustering on detected POIs for big drone placement
+            if detected_pois and len(detected_pois) >= num_big:
                 kmeans_seed = hash((num_big, num_small)) % (2**32)
-                big_drone_positions, big_drone_poi_chunks = kmeans(detected_pois, num_big, seed=kmeans_seed)
+                X = [[p['x'], p['y']] for p in detected_pois]
+                kmeans = KMeans(n_clusters=num_big, random_state=kmeans_seed, n_init=10)
+                labels = kmeans.fit_predict(X)
+                centers = kmeans.cluster_centers_
+                big_drone_positions = [{'x': float(c[0]), 'y': float(c[1])} for c in centers]
+                big_drone_poi_chunks = [[] for _ in range(num_big)]
+                for idx, label in enumerate(labels):
+                    big_drone_poi_chunks[label].append(detected_pois[idx])
+            elif detected_pois:
+                # Fewer POIs than big drones: assign each POI to its own drone, rest are empty
+                big_drone_positions = detected_pois + [{'x': MAP_W/2, 'y': MAP_H/2} for _ in range(num_big - len(detected_pois))]
+                big_drone_poi_chunks = [[p] for p in detected_pois] + [[] for _ in range(num_big - len(detected_pois))]
             else:
                 big_drone_positions = [{'x': MAP_W/2, 'y': MAP_H/2} for _ in range(num_big)]
                 big_drone_poi_chunks = [[] for _ in range(num_big)]

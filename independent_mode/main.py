@@ -222,7 +222,7 @@ def main():
                 points = np.array([[row[0], row[1]] for row in results])
                 values = np.array([row[2] for row in results])
                 grid_bigs, grid_smalls = np.mgrid[min(bigs):max(bigs):200j, min(smalls):max(smalls):200j]
-                grid_energy = griddata(points, values, (grid_bigs, grid_smalls), method='linear')
+                grid_energy = griddata(points, values, (grid_bigs, grid_smalls), method='nearest')
                 plt.figure(figsize=(8,6))
                 plt.imshow(grid_energy.T, extent=(min(bigs), max(bigs), min(smalls), max(smalls)), origin='lower', aspect='auto', cmap='viridis')
                 plt.colorbar(label='Total Energy (Interpolated)')
