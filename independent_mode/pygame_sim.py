@@ -89,12 +89,31 @@ def nearest_neighbor_tsp(start, points):
     return path
 
 def two_opt(path):
+    """Improve a TSP path using 2-opt swaps and eliminate edge crossings.
+
+    The function repeatedly applies standard 2‑opt improvements and then scans
+    the resulting tour for any intersecting edges. When a crossing is found the
+    segment between the two intersecting edges is reversed, which removes the
+    crossing while preserving a valid tour. The process continues until no
+    further improvements or crossings are detected.
+    """
     best = path[:]
     improved = True
-    def path_length(path):
-        return sum(math.hypot(path[i]['x']-path[i+1]['x'], path[i]['y']-path[i+1]['y']) for i in range(len(path)-1))
+    def path_length(p):
+        return sum(math.hypot(p[i]['x'] - p[i+1]['x'], p[i]['y'] - p[i+1]['y']) for i in range(len(p)-1))
+    def segments_intersect(a1, a2, b1, b2):
+        """Return True if line segments a1‑a2 and b1‑b2 intersect (excluding shared endpoints)."""
+        def orient(p, q, r):
+            return (q['x'] - p['x']) * (r['y'] - p['y']) - (q['y'] - p['y']) * (r['x'] - p['x'])
+        o1 = orient(a1, a2, b1)
+        o2 = orient(a1, a2, b2)
+        o3 = orient(b1, b2, a1)
+        o4 = orient(b1, b2, a2)
+        # General case: opposite orientations
+        return (o1 * o2 < 0) and (o3 * o4 < 0)
     while improved:
         improved = False
+        # Standard 2‑opt improvement pass
         for i in range(1, len(best) - 2):
             for j in range(i + 1, len(best) - 1):
                 if j - i == 1:
@@ -103,7 +122,19 @@ def two_opt(path):
                 if path_length(new_path) < path_length(best):
                     best = new_path
                     improved = True
-        path = best
+        # Crossing‑removal pass
+        for i in range(len(best) - 1):
+            for j in range(i + 2, len(best) - 1):
+                # Skip the first‑last edge which closes the tour
+                if i == 0 and j == len(best) - 1:
+                    continue
+                a1, a2 = best[i], best[i+1]
+                b1, b2 = best[j], best[j+1]
+                if segments_intersect(a1, a2, b1, b2):
+                    # Reverse the segment between i+1 and j to eliminate the crossing
+                    best = best[:i+1] + best[i+1:j+1][::-1] + best[j+1:]
+                    improved = True
+        # Loop continues if any change was made
     return best
 
 def compute_paths(num_big, num_small):
