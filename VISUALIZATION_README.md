@@ -27,6 +27,13 @@ This project now includes comprehensive interactive visualizations using Plotly 
 5. **Browse everything from one page:**
    Open `visualizations/index.html` for a grouped, filterable index of all dashboards.
 
+   The Pages workflow (`.github/workflows/deploy-pages.yml`) publishes
+   `visualizations/` on pushes to `main`/`master` and always uploads a
+   `dashboards-site` artifact. Because this repository is private and GitHub
+   Pages is not available for private repositories on the current plan, the
+   deploy job is skipped until the repository is made public (or the plan is
+   upgraded) and Pages is enabled with "GitHub Actions" as the source.
+
 ## 📊 Available Visualizations
 
 ### 1. **Interactive Heatmaps**

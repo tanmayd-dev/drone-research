@@ -15,11 +15,10 @@ concurrency:
   cancel-in-progress: false
 
 jobs:
-  deploy:
+  build:
     runs-on: ubuntu-latest
-    environment:
-      name: github-pages
-      url: ${{ steps.deployment.outputs.page_url }}
+    outputs:
+      pages-enabled: ${{ steps.pages.outputs.enabled }}
     steps:
       - name: Checkout
         uses: actions/checkout@v4
@@ -27,14 +26,46 @@ jobs:
       - name: Check every dashboard is linked from visualizations/index.html
         run: ./scripts/check-index.sh
 
+      # GitHub Pages is unavailable for private repositories on plans without
+      # Pages support. Detect that instead of failing every push: the site is
+      # still uploaded as a downloadable artifact.
+      - name: Check whether GitHub Pages is available
+        id: pages
+        env:
+          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        run: |
+          if gh api "repos/${{ github.repository }}/pages" >/dev/null 2>&1; then
+            echo "enabled=true" >> "$GITHUB_OUTPUT"
+          else
+            echo "enabled=false" >> "$GITHUB_OUTPUT"
+            echo "::notice title=Pages unavailable::Pages is not enabled for this repository (private repositories need a plan with Pages support). The dashboards are uploaded as the 'dashboards-site' artifact instead."
+          fi
+
+      - name: Upload dashboards site artifact
+        uses: actions/upload-artifact@v4
+        with:
+          name: dashboards-site
+          path: visualizations
+          if-no-files-found: error
+
       - name: Configure Pages
+        if: steps.pages.outputs.enabled == 'true'
         uses: actions/configure-pages@v5
 
       - name: Upload visualizations as Pages artifact
+        if: steps.pages.outputs.enabled == 'true'
         uses: actions/upload-pages-artifact@v3
         with:
           path: visualizations
 
+  deploy:
+    needs: build
+    if: needs.build.outputs.pages-enabled == 'true'
+    runs-on: ubuntu-latest
+    environment:
+      name: github-pages
+      url: ${{ steps.deployment.outputs.page_url }}
+    steps:
       - name: Deploy to GitHub Pages
         id: deployment
         uses: actions/deploy-pages@v4
