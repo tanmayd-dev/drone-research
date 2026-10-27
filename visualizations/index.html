@@ -1,0 +1,735 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Drone Energy Dashboards — Index</title>
+<meta name="description" content="Navigable index of the standalone Plotly dashboards for the drone energy simulation project.">
+<style>
+  :root {
+    --paper: #f6f2ea;
+    --paper-glow: #fdfaf4;
+    --card: #fffdf9;
+    --ink: #17212b;
+    --muted: #5c6672;
+    --faint: #8a929b;
+    --line: #e3dbcd;
+    --line-strong: #d3c8b6;
+    --accent: #b4531f;
+    --accent-ink: #8a3d13;
+    --accent-soft: #f4e4d7;
+    --shadow: 0 1px 2px rgba(23, 33, 43, 0.04), 0 12px 28px -22px rgba(23, 33, 43, 0.35);
+    --serif: "Iowan Old Style", "Palatino Linotype", Palatino, Georgia, "Times New Roman", serif;
+    --sans: ui-sans-serif, system-ui, -apple-system, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif;
+    --mono: ui-monospace, SFMono-Regular, "SF Mono", Menlo, Consolas, "Liberation Mono", monospace;
+  }
+
+  @media (prefers-color-scheme: dark) {
+    :root {
+      --paper: #11161c;
+      --paper-glow: #151c24;
+      --card: #171f28;
+      --ink: #eef1f4;
+      --muted: #a3adb8;
+      --faint: #7c8794;
+      --line: #26313d;
+      --line-strong: #354352;
+      --accent: #e88a54;
+      --accent-ink: #f0a271;
+      --accent-soft: #2c2119;
+      --shadow: 0 1px 2px rgba(0, 0, 0, 0.3), 0 16px 32px -24px rgba(0, 0, 0, 0.8);
+    }
+  }
+
+  * { box-sizing: border-box; }
+
+  [hidden] { display: none !important; }
+
+  html { -webkit-text-size-adjust: 100%; }
+
+  body {
+    margin: 0;
+    background:
+      radial-gradient(900px 420px at 12% -8%, var(--paper-glow), transparent 70%),
+      var(--paper);
+    color: var(--ink);
+    font-family: var(--sans);
+    font-size: 16px;
+    line-height: 1.55;
+    -webkit-font-smoothing: antialiased;
+  }
+
+  .wrap {
+    max-width: 1120px;
+    margin: 0 auto;
+    padding: 0 clamp(1rem, 4vw, 2.5rem);
+  }
+
+  /* ---------- Hero ---------- */
+
+  .hero {
+    padding: clamp(3rem, 7vw, 5.5rem) 0 clamp(1.75rem, 3vw, 2.5rem);
+    border-bottom: 1px solid var(--line);
+  }
+
+  .eyebrow {
+    margin: 0 0 0.9rem;
+    font-size: 0.72rem;
+    font-weight: 650;
+    letter-spacing: 0.16em;
+    text-transform: uppercase;
+    color: var(--accent);
+  }
+
+  h1 {
+    margin: 0;
+    font-family: var(--serif);
+    font-weight: 600;
+    font-size: clamp(2.4rem, 6.5vw, 4.1rem);
+    line-height: 1.02;
+    letter-spacing: -0.022em;
+    text-wrap: balance;
+  }
+
+  .lede {
+    max-width: 62ch;
+    margin: 1.15rem 0 0;
+    font-size: clamp(1rem, 1.6vw, 1.12rem);
+    color: var(--muted);
+    text-wrap: pretty;
+  }
+
+  .facts {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0.6rem 1.6rem;
+    margin: 1.9rem 0 0;
+    padding: 0;
+    list-style: none;
+    font-size: 0.85rem;
+    color: var(--muted);
+  }
+
+  .facts li {
+    display: flex;
+    align-items: baseline;
+    gap: 0.45rem;
+  }
+
+  .facts strong {
+    font-variant-numeric: tabular-nums;
+    color: var(--ink);
+    font-weight: 650;
+  }
+
+  .facts li::before {
+    content: "";
+    width: 0.38rem;
+    height: 0.38rem;
+    border-radius: 50%;
+    background: var(--accent);
+    transform: translateY(-0.12rem);
+  }
+
+  /* ---------- Sticky toolbar ---------- */
+
+  .toolbar {
+    position: sticky;
+    top: 0;
+    z-index: 10;
+    background: var(--paper);
+    background: color-mix(in srgb, var(--paper) 88%, transparent);
+    backdrop-filter: blur(10px);
+    -webkit-backdrop-filter: blur(10px);
+    border-bottom: 1px solid var(--line);
+  }
+
+  .toolbar-inner {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    gap: 0.75rem 1.25rem;
+    padding-top: 0.7rem;
+    padding-bottom: 0.7rem;
+  }
+
+  .toolbar label {
+    position: absolute;
+    width: 1px;
+    height: 1px;
+    overflow: hidden;
+    clip-path: inset(50%);
+    white-space: nowrap;
+  }
+
+  #filter {
+    flex: 1 1 15rem;
+    min-width: 0;
+    padding: 0.5rem 0.8rem;
+    font: inherit;
+    font-size: 0.9rem;
+    color: var(--ink);
+    background: var(--card);
+    border: 1px solid var(--line-strong);
+    border-radius: 0.5rem;
+    outline: none;
+  }
+
+  #filter:focus-visible {
+    border-color: var(--accent);
+    box-shadow: 0 0 0 3px color-mix(in srgb, var(--accent) 22%, transparent);
+  }
+
+  #filter::placeholder { color: var(--faint); }
+
+  .count {
+    font-size: 0.8rem;
+    color: var(--muted);
+    font-variant-numeric: tabular-nums;
+    white-space: nowrap;
+  }
+
+  .jump {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0.4rem;
+    margin-left: auto;
+  }
+
+  .jump a {
+    display: inline-block;
+    padding: 0.28rem 0.6rem;
+    font-size: 0.76rem;
+    font-weight: 550;
+    color: var(--muted);
+    text-decoration: none;
+    border: 1px solid var(--line);
+    border-radius: 999px;
+    transition: color 140ms ease, border-color 140ms ease, background-color 140ms ease;
+  }
+
+  .jump a:hover {
+    color: var(--accent-ink);
+    background: var(--accent-soft);
+    border-color: color-mix(in srgb, var(--accent) 35%, var(--line));
+  }
+
+  /* ---------- Sections ---------- */
+
+  main { padding-bottom: 4rem; }
+
+  .section {
+    padding-top: clamp(2.25rem, 5vw, 3.5rem);
+    scroll-margin-top: 5.5rem;
+  }
+
+  .section-head {
+    display: flex;
+    align-items: baseline;
+    gap: 0.8rem;
+    margin-bottom: 1.35rem;
+    padding-bottom: 0.6rem;
+    border-bottom: 1px solid var(--line);
+  }
+
+  .section-head h2 {
+    margin: 0;
+    font-family: var(--serif);
+    font-size: clamp(1.45rem, 2.6vw, 1.9rem);
+    font-weight: 600;
+    letter-spacing: -0.01em;
+  }
+
+  .section-head .num {
+    font-family: var(--mono);
+    font-size: 0.72rem;
+    color: var(--accent);
+  }
+
+  .section-head .n {
+    margin-left: auto;
+    font-size: 0.78rem;
+    color: var(--muted);
+    font-variant-numeric: tabular-nums;
+  }
+
+  .group { margin-top: 1.6rem; }
+  .group:first-of-type { margin-top: 0; }
+
+  .group > h3 {
+    margin: 0 0 0.7rem;
+    font-size: 0.72rem;
+    font-weight: 650;
+    letter-spacing: 0.13em;
+    text-transform: uppercase;
+    color: var(--faint);
+  }
+
+  /* ---------- Cards ---------- */
+
+  .cards {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(260px, 1fr));
+    gap: 0.85rem;
+    margin: 0;
+    padding: 0;
+    list-style: none;
+  }
+
+  .card { display: flex; }
+
+  .card a {
+    display: flex;
+    flex-direction: column;
+    width: 100%;
+    padding: 1rem 1.05rem 0.9rem;
+    color: inherit;
+    text-decoration: none;
+    background: var(--card);
+    border: 1px solid var(--line);
+    border-radius: 0.7rem;
+    box-shadow: var(--shadow);
+    transition: border-color 150ms ease, transform 150ms ease, box-shadow 150ms ease;
+  }
+
+  .card a:hover {
+    border-color: color-mix(in srgb, var(--accent) 45%, var(--line));
+    transform: translateY(-2px);
+    box-shadow: 0 1px 2px rgba(23, 33, 43, 0.05), 0 18px 32px -22px rgba(23, 33, 43, 0.45);
+  }
+
+  .card a:focus-visible {
+    outline: 2px solid var(--accent);
+    outline-offset: 2px;
+  }
+
+  .card h4 {
+    margin: 0;
+    font-size: 0.98rem;
+    font-weight: 600;
+    line-height: 1.3;
+    letter-spacing: -0.005em;
+  }
+
+  .card p {
+    margin: 0.35rem 0 0.85rem;
+    font-size: 0.845rem;
+    line-height: 1.5;
+    color: var(--muted);
+    text-wrap: pretty;
+  }
+
+  .card .file {
+    margin-top: auto;
+    font-family: var(--mono);
+    font-size: 0.7rem;
+    letter-spacing: -0.01em;
+    color: var(--faint);
+    word-break: break-all;
+  }
+
+  .card .file::before {
+    content: "↗";
+    margin-right: 0.35rem;
+    color: var(--accent);
+  }
+
+  .empty {
+    display: none;
+    padding: 2rem 0;
+    color: var(--muted);
+    font-size: 0.9rem;
+  }
+
+  body.is-filtered .empty { display: block; }
+
+  /* ---------- Footer ---------- */
+
+  footer {
+    padding: 2rem 0 3rem;
+    border-top: 1px solid var(--line);
+    font-size: 0.8rem;
+    color: var(--faint);
+  }
+
+  footer p { margin: 0.3rem 0; }
+  footer code { font-family: var(--mono); font-size: 0.95em; color: var(--muted); }
+
+  @media (max-width: 640px) {
+    .jump { margin-left: 0; }
+    .toolbar-inner { gap: 0.5rem; }
+  }
+
+  @media (prefers-reduced-motion: reduce) {
+    * { transition: none !important; }
+  }
+</style>
+</head>
+<body>
+
+<header class="wrap hero">
+  <p class="eyebrow">Drone energy simulation</p>
+  <h1>Dashboard index</h1>
+  <p class="lede">
+    Standalone, interactive Plotly views of the sweep results — energy per drone
+    configuration, mode comparisons, 3D energy surfaces and POI-count sliders.
+    Every file is self-contained: Plotly 3.0.1 is inlined, so no CDN or network
+    access is needed.
+  </p>
+  <ul class="facts">
+    <li><strong>28</strong> dashboards</li>
+    <li><strong>4.7–66 MB</strong> per file — large by design</li>
+    <li><strong>No external</strong> JS/CSS</li>
+  </ul>
+</header>
+
+<div class="toolbar">
+  <div class="wrap toolbar-inner">
+    <label for="filter">Filter dashboards</label>
+    <input id="filter" type="search" placeholder="Filter by name, mode or POI count…" autocomplete="off">
+    <span class="count" id="count" aria-live="polite">28 of 28</span>
+    <nav class="jump" aria-label="Dashboard sections">
+      <a href="#overview">Overview</a>
+      <a href="#heatmaps">Heatmaps</a>
+      <a href="#surfaces">3D surfaces</a>
+      <a href="#scaling">Energy vs POIs</a>
+      <a href="#sliders">Sliders</a>
+    </nav>
+  </div>
+</div>
+
+<main class="wrap">
+
+  <!-- ================= Overview ================= -->
+  <section class="section" id="overview" data-section>
+    <div class="section-head">
+      <span class="num">01</span>
+      <h2>Overview</h2>
+      <span class="n">2 dashboards</span>
+    </div>
+
+    <ul class="cards">
+      <li class="card" data-search="comprehensive dashboard overview multi heatmap independent mode">
+        <a href="comprehensive_dashboard.html">
+          <h4>Comprehensive Dashboard</h4>
+          <p>Four independent-mode heatmaps in one view, at evenly spaced POI counts.</p>
+          <span class="file">comprehensive_dashboard.html</span>
+        </a>
+      </li>
+      <li class="card" data-search="optimal configurations big small drones poi count both modes analysis">
+        <a href="optimal_configurations.html">
+          <h4>Optimal Configurations by POI Count</h4>
+          <p>Optimal number of big and small drones per POI count, for both modes.</p>
+          <span class="file">optimal_configurations.html</span>
+        </a>
+      </li>
+    </ul>
+  </section>
+
+  <!-- ================= Heatmaps ================= -->
+  <section class="section" id="heatmaps" data-section>
+    <div class="section-head">
+      <span class="num">02</span>
+      <h2>Energy heatmaps</h2>
+      <span class="n">12 dashboards</span>
+    </div>
+
+    <div class="group">
+      <h3>Independent mode</h3>
+      <ul class="cards">
+        <li class="card" data-search="independent mode heatmap 10 pois energy big small drones">
+          <a href="independent_heatmap_10pois.html">
+            <h4>Independent Mode Heatmap — 10 POIs</h4>
+            <p>Energy for every big × small drone pairing at 10 POIs.</p>
+            <span class="file">independent_heatmap_10pois.html</span>
+          </a>
+        </li>
+        <li class="card" data-search="independent mode heatmap 50 pois energy big small drones">
+          <a href="independent_heatmap_50pois.html">
+            <h4>Independent Mode Heatmap — 50 POIs</h4>
+            <p>Energy for every big × small drone pairing at 50 POIs.</p>
+            <span class="file">independent_heatmap_50pois.html</span>
+          </a>
+        </li>
+        <li class="card" data-search="independent mode heatmap 100 pois energy big small drones">
+          <a href="independent_heatmap_100pois.html">
+            <h4>Independent Mode Heatmap — 100 POIs</h4>
+            <p>Energy for every big × small drone pairing at 100 POIs.</p>
+            <span class="file">independent_heatmap_100pois.html</span>
+          </a>
+        </li>
+        <li class="card" data-search="independent mode heatmap 200 pois energy big small drones">
+          <a href="independent_heatmap_200pois.html">
+            <h4>Independent Mode Heatmap — 200 POIs</h4>
+            <p>Energy for every big × small drone pairing at 200 POIs.</p>
+            <span class="file">independent_heatmap_200pois.html</span>
+          </a>
+        </li>
+      </ul>
+    </div>
+
+    <div class="group">
+      <h3>External mode</h3>
+      <ul class="cards">
+        <li class="card" data-search="external mode heatmap 10 pois energy big small drones">
+          <a href="external_heatmap_10pois.html">
+            <h4>External Mode Heatmap — 10 POIs</h4>
+            <p>Energy for every big × small drone pairing at 10 POIs.</p>
+            <span class="file">external_heatmap_10pois.html</span>
+          </a>
+        </li>
+        <li class="card" data-search="external mode heatmap 50 pois energy big small drones">
+          <a href="external_heatmap_50pois.html">
+            <h4>External Mode Heatmap — 50 POIs</h4>
+            <p>Energy for every big × small drone pairing at 50 POIs.</p>
+            <span class="file">external_heatmap_50pois.html</span>
+          </a>
+        </li>
+        <li class="card" data-search="external mode heatmap 100 pois energy big small drones">
+          <a href="external_heatmap_100pois.html">
+            <h4>External Mode Heatmap — 100 POIs</h4>
+            <p>Energy for every big × small drone pairing at 100 POIs.</p>
+            <span class="file">external_heatmap_100pois.html</span>
+          </a>
+        </li>
+        <li class="card" data-search="external mode heatmap 200 pois energy big small drones">
+          <a href="external_heatmap_200pois.html">
+            <h4>External Mode Heatmap — 200 POIs</h4>
+            <p>Energy for every big × small drone pairing at 200 POIs.</p>
+            <span class="file">external_heatmap_200pois.html</span>
+          </a>
+        </li>
+      </ul>
+    </div>
+
+    <div class="group">
+      <h3>Mode comparison</h3>
+      <ul class="cards">
+        <li class="card" data-search="comparison heatmap 10 pois independent external side by side">
+          <a href="comparison_heatmap_10pois.html">
+            <h4>Mode Comparison Heatmap — 10 POIs</h4>
+            <p>Independent and external energy side by side at 10 POIs.</p>
+            <span class="file">comparison_heatmap_10pois.html</span>
+          </a>
+        </li>
+        <li class="card" data-search="comparison heatmap 50 pois independent external side by side">
+          <a href="comparison_heatmap_50pois.html">
+            <h4>Mode Comparison Heatmap — 50 POIs</h4>
+            <p>Independent and external energy side by side at 50 POIs.</p>
+            <span class="file">comparison_heatmap_50pois.html</span>
+          </a>
+        </li>
+        <li class="card" data-search="comparison heatmap 100 pois independent external side by side">
+          <a href="comparison_heatmap_100pois.html">
+            <h4>Mode Comparison Heatmap — 100 POIs</h4>
+            <p>Independent and external energy side by side at 100 POIs.</p>
+            <span class="file">comparison_heatmap_100pois.html</span>
+          </a>
+        </li>
+        <li class="card" data-search="comparison heatmap 200 pois independent external side by side">
+          <a href="comparison_heatmap_200pois.html">
+            <h4>Mode Comparison Heatmap — 200 POIs</h4>
+            <p>Independent and external energy side by side at 200 POIs.</p>
+            <span class="file">comparison_heatmap_200pois.html</span>
+          </a>
+        </li>
+      </ul>
+    </div>
+  </section>
+
+  <!-- ================= 3D surfaces ================= -->
+  <section class="section" id="surfaces" data-section>
+    <div class="section-head">
+      <span class="num">03</span>
+      <h2>3D energy surfaces</h2>
+      <span class="n">6 dashboards</span>
+    </div>
+
+    <div class="group">
+      <h3>Independent mode</h3>
+      <ul class="cards">
+        <li class="card" data-search="independent mode 3d surface 50 pois energy landscape">
+          <a href="independent_3d_50pois.html">
+            <h4>Independent Mode 3D Surface — 50 POIs</h4>
+            <p>Rotatable energy landscape over big and small drone counts.</p>
+            <span class="file">independent_3d_50pois.html</span>
+          </a>
+        </li>
+        <li class="card" data-search="independent mode 3d surface 100 pois energy landscape">
+          <a href="independent_3d_100pois.html">
+            <h4>Independent Mode 3D Surface — 100 POIs</h4>
+            <p>Rotatable energy landscape over big and small drone counts.</p>
+            <span class="file">independent_3d_100pois.html</span>
+          </a>
+        </li>
+        <li class="card" data-search="independent mode 3d surface 200 pois energy landscape">
+          <a href="independent_3d_200pois.html">
+            <h4>Independent Mode 3D Surface — 200 POIs</h4>
+            <p>Rotatable energy landscape over big and small drone counts.</p>
+            <span class="file">independent_3d_200pois.html</span>
+          </a>
+        </li>
+      </ul>
+    </div>
+
+    <div class="group">
+      <h3>External mode</h3>
+      <ul class="cards">
+        <li class="card" data-search="external mode 3d surface 50 pois energy landscape">
+          <a href="external_3d_50pois.html">
+            <h4>External Mode 3D Surface — 50 POIs</h4>
+            <p>Rotatable energy landscape over big and small drone counts.</p>
+            <span class="file">external_3d_50pois.html</span>
+          </a>
+        </li>
+        <li class="card" data-search="external mode 3d surface 100 pois energy landscape">
+          <a href="external_3d_100pois.html">
+            <h4>External Mode 3D Surface — 100 POIs</h4>
+            <p>Rotatable energy landscape over big and small drone counts.</p>
+            <span class="file">external_3d_100pois.html</span>
+          </a>
+        </li>
+        <li class="card" data-search="external mode 3d surface 200 pois energy landscape">
+          <a href="external_3d_200pois.html">
+            <h4>External Mode 3D Surface — 200 POIs</h4>
+            <p>Rotatable energy landscape over big and small drone counts.</p>
+            <span class="file">external_3d_200pois.html</span>
+          </a>
+        </li>
+      </ul>
+    </div>
+  </section>
+
+  <!-- ================= Energy vs POIs ================= -->
+  <section class="section" id="scaling" data-section>
+    <div class="section-head">
+      <span class="num">04</span>
+      <h2>Energy vs POIs</h2>
+      <span class="n">4 dashboards</span>
+    </div>
+
+    <ul class="cards">
+      <li class="card" data-search="energy vs pois 2 big 4 small scaling trend line plot">
+        <a href="energy_vs_pois_2big_4small.html">
+          <h4>Energy vs POIs — 2 Big / 4 Small</h4>
+          <p>Energy scaling as the POI count grows, both modes.</p>
+          <span class="file">energy_vs_pois_2big_4small.html</span>
+        </a>
+      </li>
+      <li class="card" data-search="energy vs pois 5 big 10 small scaling trend line plot">
+        <a href="energy_vs_pois_5big_10small.html">
+          <h4>Energy vs POIs — 5 Big / 10 Small</h4>
+          <p>Energy scaling as the POI count grows, both modes.</p>
+          <span class="file">energy_vs_pois_5big_10small.html</span>
+        </a>
+      </li>
+      <li class="card" data-search="energy vs pois 8 big 16 small scaling trend line plot">
+        <a href="energy_vs_pois_8big_16small.html">
+          <h4>Energy vs POIs — 8 Big / 16 Small</h4>
+          <p>Energy scaling as the POI count grows, both modes.</p>
+          <span class="file">energy_vs_pois_8big_16small.html</span>
+        </a>
+      </li>
+      <li class="card" data-search="energy vs pois 10 big 20 small scaling trend line plot">
+        <a href="energy_vs_pois_10big_20small.html">
+          <h4>Energy vs POIs — 10 Big / 20 Small</h4>
+          <p>Energy scaling as the POI count grows, both modes.</p>
+          <span class="file">energy_vs_pois_10big_20small.html</span>
+        </a>
+      </li>
+    </ul>
+  </section>
+
+  <!-- ================= Sliders ================= -->
+  <section class="section" id="sliders" data-section>
+    <div class="section-head">
+      <span class="num">05</span>
+      <h2>Interactive sliders</h2>
+      <span class="n">4 dashboards</span>
+    </div>
+
+    <ul class="cards">
+      <li class="card" data-search="energy comparison slider poi count difference external independent mode">
+        <a href="energy_comparison_slider.html">
+          <h4>Energy Comparison Slider</h4>
+          <p>Sweep the POI count and watch the energy difference between modes.</p>
+          <span class="file">energy_comparison_slider.html</span>
+        </a>
+      </li>
+      <li class="card" data-search="energy comparison slider interpolated poi count difference external independent mode">
+        <a href="energy_comparison_slider_interpolated.html">
+          <h4>Energy Comparison Slider (Interpolated)</h4>
+          <p>Same mode-difference sweep, with interpolated independent-mode data.</p>
+          <span class="file">energy_comparison_slider_interpolated.html</span>
+        </a>
+      </li>
+      <li class="card" data-search="interactive poi slider heatmap energy requirements">
+        <a href="interactive_poi_slider_heatmap.html">
+          <h4>POI Slider Heatmap</h4>
+          <p>Heatmap with a slider that steps through every POI count.</p>
+          <span class="file">interactive_poi_slider_heatmap.html</span>
+        </a>
+      </li>
+      <li class="card" data-search="interactive poi slider heatmap interpolated energy requirements">
+        <a href="interactive_poi_slider_heatmap_interpolated.html">
+          <h4>POI Slider Heatmap (Interpolated)</h4>
+          <p>POI-count heatmap sweep with interpolated independent-mode data.</p>
+          <span class="file">interactive_poi_slider_heatmap_interpolated.html</span>
+        </a>
+      </li>
+    </ul>
+  </section>
+
+  <p class="empty" id="empty">No dashboard matches that filter.</p>
+</main>
+
+<footer class="wrap">
+  <p>Generated from the filenames in <code>visualizations/</code>; every dashboard above is a standalone HTML file.</p>
+  <p>Coverage is enforced by <code>scripts/check-index.sh</code>; deploys to GitHub Pages upload this directory as-is.</p>
+</footer>
+
+<script>
+  (function () {
+    var input = document.getElementById('filter');
+    var count = document.getElementById('count');
+    var empty = document.getElementById('empty');
+    var cards = Array.prototype.slice.call(document.querySelectorAll('.card'));
+
+    function normalise(s) {
+      return s.toLowerCase().replace(/[^a-z0-9]+/g, ' ').trim();
+    }
+
+    cards.forEach(function (card) {
+      card.dataset.haystack = normalise(
+        card.getAttribute('data-search') + ' ' + card.textContent
+      );
+    });
+
+    function apply() {
+      var q = normalise(input.value);
+      var terms = q ? q.split(' ') : [];
+      var shown = 0;
+
+      cards.forEach(function (card) {
+        var hay = card.dataset.haystack;
+        var match = terms.every(function (t) { return hay.indexOf(t) !== -1; });
+        card.hidden = !match;
+        if (match) shown++;
+      });
+
+      count.textContent = shown + ' of ' + cards.length;
+      document.body.classList.toggle('is-filtered', shown === 0 && terms.length > 0);
+
+      document.querySelectorAll('[data-section]').forEach(function (section) {
+        var visible = section.querySelector('.card:not([hidden])');
+        section.hidden = !visible;
+      });
+    }
+
+    input.addEventListener('input', apply);
+    apply();
+  })();
+</script>
+
+</body>
+</html>

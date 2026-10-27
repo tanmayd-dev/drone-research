@@ -24,6 +24,9 @@ This project now includes comprehensive interactive visualizations using Plotly 
    python open_visualizations.py
    ```
 
+5. **Browse everything from one page:**
+   Open `visualizations/index.html` for a grouped, filterable index of all dashboards.
+
 ## 📊 Available Visualizations
 
 ### 1. **Interactive Heatmaps**
@@ -79,6 +82,7 @@ This project now includes comprehensive interactive visualizations using Plotly 
 
 ```
 visualizations/
+├── index.html                           # Navigable index of all dashboards
 ├── independent_heatmap_10pois.html      # Independent mode, 10 POIs
 ├── independent_heatmap_50pois.html      # Independent mode, 50 POIs
 ├── independent_heatmap_100pois.html     # Independent mode, 100 POIs
