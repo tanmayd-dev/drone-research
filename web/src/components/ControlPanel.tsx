@@ -15,37 +15,33 @@ interface ControlPanelProps {
   onStep: () => void;
   onReset: () => void;
   onApplyPreset: (preset: FieldPreset) => void;
-  editMode: 'none' | 'poi' | 'obstacle';
-  onEditModeChange: (em: 'none' | 'poi' | 'obstacle') => void;
+  editMode: 'none' | 'poi';
+  onEditModeChange: (em: 'none' | 'poi') => void;
 }
 
 export const PRESETS: FieldPreset[] = [
   {
     name: 'RTB Pine Infestation',
-    description: 'Real-world pine grove affected by Red Turpentine Beetles (clustered canopy damage)',
+    description: 'Realistic pine grove affected by Red Turpentine Beetles (clustered canopy damage)',
     numPOIs: 45,
-    numObstacles: 8,
     clusteringDistribution: 'clustered'
   },
   {
     name: 'Dense Orchard',
     description: 'High-density grid of fruit trees requiring high coverage pathing',
     numPOIs: 80,
-    numObstacles: 12,
     clusteringDistribution: 'orchard'
   },
   {
-    name: 'Obstacle Maze',
-    description: 'Challenging layout with structures, barns, and pylons testing A* avoidance',
-    numPOIs: 35,
-    numObstacles: 22,
+    name: 'Uniform Field',
+    description: 'Uniformly distributed anomalies across the field boundary',
+    numPOIs: 40,
     clusteringDistribution: 'uniform'
   },
   {
     name: 'Sparse Outcrop',
-    description: 'Scattered anomalies across large agricultural boundary',
+    description: 'Scattered anomalies testing long-range cluster routing',
     numPOIs: 20,
-    numObstacles: 5,
     clusteringDistribution: 'uniform'
   }
 ];
@@ -199,7 +195,7 @@ export const ControlPanel: React.FC<ControlPanelProps> = ({
               className="py-2 px-2.5 bg-slate-800 hover:bg-slate-700 border border-slate-700 text-left rounded-lg transition-colors"
             >
               <div className="text-xs font-semibold text-slate-200">{p.name}</div>
-              <div className="text-[10px] text-slate-400 truncate">{p.numPOIs} POIs · {p.numObstacles} Obs</div>
+              <div className="text-[10px] text-slate-400 truncate">{p.numPOIs} POIs · {p.clusteringDistribution}</div>
             </button>
           ))}
         </div>
@@ -208,9 +204,9 @@ export const ControlPanel: React.FC<ControlPanelProps> = ({
       {/* Canvas Editing Mode */}
       <div className="pt-2 border-t border-slate-800">
         <label className="text-xs font-bold text-slate-400 uppercase tracking-wider block mb-2">
-          Click-to-Add Tools
+          Interactive Tool
         </label>
-        <div className="grid grid-cols-3 gap-2">
+        <div className="grid grid-cols-2 gap-2">
           <button
             onClick={() => onEditModeChange(editMode === 'poi' ? 'none' : 'poi')}
             className={`py-1.5 px-2 text-xs rounded-lg border font-medium transition-colors ${
@@ -219,17 +215,7 @@ export const ControlPanel: React.FC<ControlPanelProps> = ({
                 : 'bg-slate-800 text-slate-300 border-slate-700 hover:bg-slate-700'
             }`}
           >
-            + Add POI
-          </button>
-          <button
-            onClick={() => onEditModeChange(editMode === 'obstacle' ? 'none' : 'obstacle')}
-            className={`py-1.5 px-2 text-xs rounded-lg border font-medium transition-colors ${
-              editMode === 'obstacle'
-                ? 'bg-rose-600 text-white border-rose-500'
-                : 'bg-slate-800 text-slate-300 border-slate-700 hover:bg-slate-700'
-            }`}
-          >
-            + Obstacle
+            + Add Tree POI
           </button>
           <button
             onClick={() => onEditModeChange('none')}
@@ -239,7 +225,7 @@ export const ControlPanel: React.FC<ControlPanelProps> = ({
                 : 'bg-slate-800 text-slate-400 border-slate-700 hover:bg-slate-700'
             }`}
           >
-            Select
+            Pan / Inspect
           </button>
         </div>
       </div>

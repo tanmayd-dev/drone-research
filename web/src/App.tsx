@@ -5,7 +5,7 @@ import { ControlPanel } from './components/ControlPanel';
 import { TelemetryHUD } from './components/TelemetryHUD';
 import { VisionExplorer } from './components/VisionExplorer';
 import { DashboardsViewer } from './components/DashboardsViewer';
-import { Point, POI, Obstacle, SimulationMode, FieldPreset } from './types';
+import { Point, POI, SimulationMode, FieldPreset } from './types';
 
 function generateInitialPOIs(count: number, distribution: 'uniform' | 'clustered' | 'orchard' = 'clustered'): POI[] {
   const pois: POI[] = [];
@@ -56,39 +56,6 @@ function generateInitialPOIs(count: number, distribution: 'uniform' | 'clustered
   return pois;
 }
 
-function generateInitialObstacles(count: number): Obstacle[] {
-  const obstacles: Obstacle[] = [];
-  const coords = [
-    { x: 500, y: 500, r: 45 },
-    { x: 250, y: 250, r: 35 },
-    { x: 750, y: 700, r: 40 },
-    { x: 750, y: 250, r: 30 },
-    { x: 250, y: 750, r: 35 },
-    { x: 450, y: 200, r: 25 },
-    { x: 600, y: 800, r: 30 }
-  ];
-
-  for (let i = 0; i < Math.min(count, coords.length); i++) {
-    obstacles.push({
-      id: `obs-${i}`,
-      x: coords[i].x,
-      y: coords[i].y,
-      radius: coords[i].r
-    });
-  }
-
-  while (obstacles.length < count) {
-    obstacles.push({
-      id: `obs-${obstacles.length}`,
-      x: 100 + Math.random() * 800,
-      y: 100 + Math.random() * 800,
-      radius: 20 + Math.random() * 25
-    });
-  }
-
-  return obstacles;
-}
-
 export const App: React.FC = () => {
   const [activeTab, setActiveTab] = useState<'sim' | 'vision' | 'dashboards'>('sim');
   const [mode, setMode] = useState<SimulationMode>('dual');
@@ -96,10 +63,9 @@ export const App: React.FC = () => {
   const [numSmallDrones, setNumSmallDrones] = useState<number>(6);
   const [simSpeed, setSimSpeed] = useState<number>(1.5);
   const [isPlaying, setIsPlaying] = useState<boolean>(true);
-  const [editMode, setEditMode] = useState<'none' | 'poi' | 'obstacle'>('none');
+  const [editMode, setEditMode] = useState<'none' | 'poi'>('none');
 
   const [pois, setPois] = useState<POI[]>(() => generateInitialPOIs(45, 'clustered'));
-  const [obstacles, setObstacles] = useState<Obstacle[]>(() => generateInitialObstacles(6));
 
   const params: SimulationParams = useMemo(() => ({
     numBigDrones,
@@ -115,16 +81,16 @@ export const App: React.FC = () => {
 
   // Engines for simulation
   const [engineIndep, setEngineIndep] = useState<SimulationEngine>(
-    () => new SimulationEngine('independent', params, pois, obstacles)
+    () => new SimulationEngine('independent', params, pois)
   );
   const [engineExt, setEngineExt] = useState<SimulationEngine>(
-    () => new SimulationEngine('external', params, pois, obstacles)
+    () => new SimulationEngine('external', params, pois)
   );
 
   const resetSimulation = useCallback(() => {
-    setEngineIndep(new SimulationEngine('independent', params, pois, obstacles));
-    setEngineExt(new SimulationEngine('external', params, pois, obstacles));
-  }, [params, pois, obstacles]);
+    setEngineIndep(new SimulationEngine('independent', params, pois));
+    setEngineExt(new SimulationEngine('external', params, pois));
+  }, [params, pois]);
 
   // Handle configuration changes
   useEffect(() => {
@@ -172,25 +138,12 @@ export const App: React.FC = () => {
     setPois(prev => [...prev, newPoi]);
   };
 
-  const handleAddObstacle = (pt: Point) => {
-    const newObs: Obstacle = {
-      id: `obs-${Date.now()}`,
-      x: pt.x,
-      y: pt.y,
-      radius: 30
-    };
-    setObstacles(prev => [...prev, newObs]);
-  };
-
   const handleApplyPreset = (preset: FieldPreset) => {
     const newPois = generateInitialPOIs(
       preset.numPOIs,
-      preset.clusteringDistribution === 'orchard' ? 'orchard' :
-      preset.clusteringDistribution === 'clustered' ? 'clustered' : 'uniform'
+      preset.clusteringDistribution
     );
-    const newObs = generateInitialObstacles(preset.numObstacles);
     setPois(newPois);
-    setObstacles(newObs);
   };
 
   return (
@@ -282,7 +235,6 @@ export const App: React.FC = () => {
                     title="Independent Mode (Decentralized Grid Partitioning)"
                     editMode={editMode}
                     onAddPOI={handleAddPOI}
-                    onAddObstacle={handleAddObstacle}
                     width={580}
                     height={580}
                   />
@@ -294,7 +246,6 @@ export const App: React.FC = () => {
                     title="External Mode (Centralized Size-Balanced K-Means)"
                     editMode={editMode}
                     onAddPOI={handleAddPOI}
-                    onAddObstacle={handleAddObstacle}
                     width={580}
                     height={580}
                   />
@@ -308,7 +259,6 @@ export const App: React.FC = () => {
                         title="Independent Mode (Grid)"
                         editMode={editMode}
                         onAddPOI={handleAddPOI}
-                        onAddObstacle={handleAddObstacle}
                         width={370}
                         height={370}
                       />
@@ -319,7 +269,6 @@ export const App: React.FC = () => {
                         title="External Mode (K-Means)"
                         editMode={editMode}
                         onAddPOI={handleAddPOI}
-                        onAddObstacle={handleAddObstacle}
                         width={370}
                         height={370}
                       />

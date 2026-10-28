@@ -5,8 +5,7 @@ import { Point } from '../types';
 interface SimulationCanvasProps {
   engine: SimulationEngine;
   onAddPOI?: (p: Point) => void;
-  onAddObstacle?: (p: Point) => void;
-  editMode: 'none' | 'poi' | 'obstacle';
+  editMode: 'none' | 'poi';
   title?: string;
   width?: number;
   height?: number;
@@ -15,7 +14,6 @@ interface SimulationCanvasProps {
 export const SimulationCanvas: React.FC<SimulationCanvasProps> = ({
   engine,
   onAddPOI,
-  onAddObstacle,
   editMode,
   title,
   width = 650,
@@ -75,43 +73,7 @@ export const SimulationCanvas: React.FC<SimulationCanvasProps> = ({
         ctx.setLineDash([]);
       }
 
-      // 3. Draw Obstacles (Circular terrain anomalies / trees / pylons)
-      for (const obs of engine.obstacles) {
-        const ox = obs.x * scaleX;
-        const oy = obs.y * scaleY;
-        const or = obs.radius * scaleX;
-
-        // Clearance zone halo
-        ctx.beginPath();
-        ctx.arc(ox, oy, or + 6 * scaleX, 0, Math.PI * 2);
-        ctx.fillStyle = 'rgba(239, 68, 68, 0.08)';
-        ctx.fill();
-        ctx.strokeStyle = 'rgba(239, 68, 68, 0.3)';
-        ctx.setLineDash([2, 2]);
-        ctx.stroke();
-        ctx.setLineDash([]);
-
-        // Main obstacle body
-        ctx.beginPath();
-        ctx.arc(ox, oy, or, 0, Math.PI * 2);
-        const grad = ctx.createRadialGradient(ox, oy, 2, ox, oy, or);
-        grad.addColorStop(0, '#7f1d1d');
-        grad.addColorStop(1, '#450a0a');
-        ctx.fillStyle = grad;
-        ctx.fill();
-        ctx.strokeStyle = '#ef4444';
-        ctx.lineWidth = 1.5;
-        ctx.stroke();
-
-        // Warning hash
-        ctx.fillStyle = '#fca5a5';
-        ctx.font = '10px sans-serif';
-        ctx.textAlign = 'center';
-        ctx.textBaseline = 'middle';
-        ctx.fillText('⚠', ox, oy);
-      }
-
-      // 4. Draw Big Drone Tour Trajectories
+      // 3. Draw Big Drone Tour Trajectories
       for (const drone of engine.bigDrones) {
         if (drone.path.length > 1) {
           ctx.beginPath();
@@ -130,7 +92,7 @@ export const SimulationCanvas: React.FC<SimulationCanvasProps> = ({
         }
       }
 
-      // 5. Draw POIs (Points of Interest / Damaged Canopies)
+      // 4. Draw POIs (Points of Interest / Damaged Canopies)
       for (const poi of engine.pois) {
         const px = poi.x * scaleX;
         const py = poi.y * scaleY;
@@ -167,7 +129,7 @@ export const SimulationCanvas: React.FC<SimulationCanvasProps> = ({
         }
       }
 
-      // 6. Draw Small Scout Drones
+      // 5. Draw Small Scout Drones
       for (const drone of engine.smallDrones) {
         if (drone.state !== 'completed') {
           const dx = drone.x * scaleX;
@@ -193,7 +155,7 @@ export const SimulationCanvas: React.FC<SimulationCanvasProps> = ({
         }
       }
 
-      // 7. Draw Big Leader Sprayer Drones
+      // 6. Draw Big Leader Sprayer Drones
       for (const drone of engine.bigDrones) {
         const dx = drone.x * scaleX;
         const dy = drone.y * scaleY;
@@ -244,8 +206,6 @@ export const SimulationCanvas: React.FC<SimulationCanvasProps> = ({
 
     if (editMode === 'poi' && onAddPOI) {
       onAddPOI({ x: clickX, y: clickY });
-    } else if (editMode === 'obstacle' && onAddObstacle) {
-      onAddObstacle({ x: clickX, y: clickY });
     }
   };
 

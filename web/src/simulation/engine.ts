@@ -1,5 +1,4 @@
-import { Point, POI, Obstacle, Drone, SimulationMode, SimulationTelemetry } from '../types';
-import { AStarPathfinder } from './astar';
+import { Point, POI, Drone, SimulationMode, SimulationTelemetry } from '../types';
 import { sizeBalancedKMeans, gridPartition } from './kmeans';
 import { nearestNeighborTSP, simulatedAnnealingTSP, dist } from './tsp';
 
@@ -23,10 +22,8 @@ export class SimulationEngine {
   public mode: SimulationMode;
   public params: SimulationParams;
   public pois: POI[];
-  public obstacles: Obstacle[];
   public smallDrones: Drone[];
   public bigDrones: Drone[];
-  public pathfinder: AStarPathfinder;
   public telemetry: SimulationTelemetry;
   public phase: 'survey' | 'action' | 'done';
   public elapsedTime: number;
@@ -35,14 +32,11 @@ export class SimulationEngine {
   constructor(
     mode: SimulationMode,
     params: SimulationParams,
-    pois: POI[],
-    obstacles: Obstacle[]
+    pois: POI[]
   ) {
     this.mode = mode;
     this.params = params;
     this.pois = pois.map(p => ({ ...p, detected: false, actionTaken: false }));
-    this.obstacles = obstacles;
-    this.pathfinder = new AStarPathfinder(obstacles, params.mapWidth, params.mapHeight);
     this.phase = 'survey';
     this.elapsedTime = 0;
 
@@ -83,7 +77,7 @@ export class SimulationEngine {
       direction *= -1;
     }
 
-    // Ensure the far boundary edge of the region is never left uncovered
+    // Ensure the outer right boundary edge is fully swept
     const rightEdge = region.x1 - Math.min(step / 3, 10);
     if (path.length > 0 && Math.abs(path[path.length - 1].x - rightEdge) > step / 2) {
       if (direction === 1) {
@@ -148,7 +142,6 @@ export class SimulationEngine {
             smallScanRadius * 2
           );
 
-          // Small drone starts and returns to the regional Big Drone depot
           const home = centers[rIdx];
           const fullPath = [home, ...sweep, home];
 
@@ -177,7 +170,6 @@ export class SimulationEngine {
       // External Mode: Small drones launch from central controller depot
       const controllerDepot: Point = { x: mapWidth / 2, y: mapHeight / 2 };
 
-      // Initialize Big Drones at central depot
       for (let i = 0; i < numBigDrones; i++) {
         this.bigDrones.push({
           id: `big-${i}`,
@@ -246,16 +238,7 @@ export class SimulationEngine {
         if (cluster.length > 0) {
           const rawTSP = nearestNeighborTSP({ x: drone.baseX, y: drone.baseY }, cluster);
           const saTSP = simulatedAnnealingTSP(rawTSP, 80, 0.95, 600);
-
-          // Resolve obstacle avoidance via A* along tour
-          const fullAvoidanceTour: Point[] = [];
-          for (let step = 0; step < saTSP.length - 1; step++) {
-            const seg = this.pathfinder.findPath(saTSP[step], saTSP[step + 1]);
-            if (step > 0 && seg.length > 0) seg.shift();
-            fullAvoidanceTour.push(...seg);
-          }
-
-          drone.path = fullAvoidanceTour;
+          drone.path = saTSP;
           drone.pathIndex = 0;
           drone.state = 'acting';
         } else {
@@ -273,15 +256,7 @@ export class SimulationEngine {
         if (cluster.length > 0) {
           const rawTSP = nearestNeighborTSP({ x: drone.baseX, y: drone.baseY }, cluster);
           const saTSP = simulatedAnnealingTSP(rawTSP, 80, 0.95, 600);
-
-          const fullAvoidanceTour: Point[] = [];
-          for (let step = 0; step < saTSP.length - 1; step++) {
-            const seg = this.pathfinder.findPath(saTSP[step], saTSP[step + 1]);
-            if (step > 0 && seg.length > 0) seg.shift();
-            fullAvoidanceTour.push(...seg);
-          }
-
-          drone.path = fullAvoidanceTour;
+          drone.path = saTSP;
           drone.pathIndex = 0;
           drone.state = 'acting';
         } else {
@@ -324,7 +299,6 @@ export class SimulationEngine {
 
           drone.energyConsumed += (moveDist / (drone.speed * 40)) * energyPerSecond;
 
-          // Trail logging
           if (drone.trail.length === 0 || dist(drone, drone.trail[drone.trail.length - 1]) > 15) {
             drone.trail.push({ x: drone.x, y: drone.y });
             if (drone.trail.length > 60) drone.trail.shift();

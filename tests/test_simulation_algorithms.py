@@ -1,5 +1,5 @@
 """
-Unit tests for A* Obstacle Avoidance, Size-Balanced K-Means, and Simulated Annealing TSP.
+Unit tests for Size-Balanced K-Means, Simulated Annealing TSP, and Adaptive Grid Partitioning.
 """
 
 import sys
@@ -8,39 +8,8 @@ sys.path.insert(0, os.path.abspath(os.path.join(os.path.dirname(__file__), "..")
 
 import pytest
 import math
-from simulation.common.astar import AStarPathfinder, circle_line_intersect
 from simulation.common.clustering import size_balanced_kmeans, grid_partition
 from simulation.common.tsp import nearest_neighbor_tsp, simulated_annealing_tsp, path_length
-
-
-def test_circle_line_intersect():
-    # Direct hit through circle at (50, 50) radius 10
-    assert circle_line_intersect((0, 50), (100, 50), (50, 50), 10) is True
-    # Clean miss far above
-    assert circle_line_intersect((0, 0), (100, 0), (50, 50), 10) is False
-    # Grazing tangent (dist = 10, radius = 9 -> miss; radius = 11 -> hit)
-    assert circle_line_intersect((0, 40), (100, 40), (50, 50), 9.0) is False
-    assert circle_line_intersect((0, 40), (100, 40), (50, 50), 11.0) is True
-
-
-def test_astar_obstacle_avoidance():
-    # Place obstacle directly between start and goal
-    obstacles = [{"x": 500, "y": 500, "radius": 40}]
-    pathfinder = AStarPathfinder(obstacles, map_size=(1000, 1000), grid_resolution=25)
-
-    start = {"x": 400.0, "y": 500.0}
-    goal = {"x": 600.0, "y": 500.0}
-
-    path = pathfinder.find_path(start, goal)
-    assert len(path) >= 2
-    assert path[0] == start
-    assert path[-1] == goal
-
-    # Verify no segment cuts through the obstacle
-    for i in range(len(path) - 1):
-        p1 = (path[i]["x"], path[i]["y"])
-        p2 = (path[i+1]["x"], path[i+1]["y"])
-        assert not circle_line_intersect(p1, p2, (500, 500), 40)
 
 
 def test_size_balanced_kmeans():
@@ -86,9 +55,7 @@ def test_grid_partition_4th_quadrant_coverage():
         centers, clusters = grid_partition(pois, num_regions=k, map_size=(1000, 1000))
         assert len(centers) == k
         assert len(clusters) == k
-        # Total assigned must equal total POIs (no POIs dropped)
         assert sum(len(c) for c in clusters) == len(pois)
 
-        # Confirm 4th quadrant point is specifically assigned in every configuration
         q4_found = any(any(p["id"] == "q4_bottom_right" for p in c) for c in clusters)
         assert q4_found, f"4th quadrant point missed for k={k}"

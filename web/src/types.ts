@@ -3,11 +3,6 @@ export interface Point {
   y: number;
 }
 
-export interface Obstacle extends Point {
-  id: string;
-  radius: number;
-}
-
 export interface POI extends Point {
   id: string;
   detected: boolean;
@@ -57,6 +52,5 @@ export interface FieldPreset {
   name: string;
   description: string;
   numPOIs: number;
-  numObstacles: number;
-  clusteringDistribution: 'uniform' | 'clustered' | 'orchard' | 'perimeter';
+  clusteringDistribution: 'uniform' | 'clustered' | 'orchard';
 }

@@ -5,14 +5,14 @@
 [![Build & Test](https://img.shields.io/badge/CI-Passing-brightgreen.svg)]()
 [![Stack](https://img.shields.io/badge/Stack-PyTorch%20%7C%20React%20%7C%20TypeScript%20%7C%20Vite-indigo.svg)]()
 
-> **Interactive Web Demonstration:** Explore live multi-drone flight simulations, obstacle avoidance, and the deep learning vision pipeline directly in your browser:  
+> **Interactive Web Demonstration:** Explore live multi-drone flight simulations, fleet coordination, and the deep learning vision pipeline directly in your browser:  
 > 👉 **[tanmayd-dev.github.io/drone-research](https://tanmayd-dev.github.io/drone-research/)**
 
 ---
 
 ## 📖 Overview
 
-This repository provides an end-to-end framework and simulation platform for heterogeneous multi-UAV precision agriculture. It combines self-supervised deep learning canopy anomaly detection with workload-balanced, obstacle-aware coverage path planning.
+This repository provides an end-to-end framework and simulation platform for heterogeneous multi-UAV precision agriculture. It combines self-supervised deep learning canopy anomaly detection with workload-balanced coverage path planning.
 
 The project builds upon research published in **Results in Engineering** (Elsevier, 2025; [DOI: 10.1016/j.rineng.2025.104081](https://doi.org/10.1016/j.rineng.2025.104081)), extending coverage path planning to a two-tier swarm hierarchy.
 
@@ -38,8 +38,8 @@ The project builds upon research published in **Results in Engineering** (Elsevi
   ┌────────────────────────────────────────────────────────┐
   │      Phase 3: Multi-UAV Workload Balancing & Routing   │
   │  • Size-Balanced K-Means: Enforces capacity C=⌈N/k⌉    │
+  │  • Adaptive Grid Partitioning: 100% field coverage     │
   │  • Simulated Annealing (SA) TSP: Escapes local minima   │
-  │  • Grid A* Pathfinder: Collision-free around obstacles  │
   │  • Big Drone Dispatch: Administers targeted treatment   │
   └────────────────────────────────────────────────────────┘
 ```
@@ -64,7 +64,7 @@ The project builds upon research published in **Results in Engineering** (Elsevi
 ```
 ├── web/                               # Interactive Web App (Vite + React + Canvas + TypeScript)
 │   ├── src/components/                # SimulationCanvas, ControlPanel, TelemetryHUD, VisionExplorer
-│   └── src/simulation/                # In-browser A*, Size-Balanced K-Means, and SA-TSP engines
+│   └── src/simulation/                # In-browser Size-Balanced K-Means and SA-TSP engines
 ├── model/                             # Machine Learning Vision Pipeline
 │   ├── train-model.ipynb              # PyTorch training & validation notebook
 │   ├── vqvae.py                       # VQ-VAE model with Squeeze-and-Excitation (SE) blocks
@@ -73,13 +73,13 @@ The project builds upon research published in **Results in Engineering** (Elsevi
 │   ├── inference.py                   # CLI to detect POIs on aerial drone images
 │   └── sample_data/                   # Sample test image patches
 ├── simulation/                        # Multi-UAV Algorithms & Energy Sweeps
-│   ├── common/                        # Shared A* obstacle avoidance, K-Means, and SA-TSP
+│   ├── common/                        # Shared K-Means clustering and SA-TSP
 │   ├── independent_mode/              # Regional grid partition simulation runner
 │   ├── external_mode/                 # Centralized Size-Balanced K-Means simulation runner
 │   └── sweep_pois.py                  # Parameter sweep engine across 1–500 POIs
 ├── visualizations/                    # 28 Pre-Computed Interactive Plotly Dashboards
 │   └── index.html                     # Searchable dashboard gallery with dark mode
-├── tests/                             # Unit test suite verifying A*, K-Means, and TSP algorithms
+├── tests/                             # Unit test suite verifying K-Means, TSP, and Grid partitioning
 └── .github/workflows/                 # CI and GitHub Pages automated deployment
 ```
 
@@ -107,7 +107,7 @@ npm run build:all
 
 ### 2. Python Simulation & Unit Tests
 
-Run the test suite to verify A* obstacle avoidance, Size-Balanced K-Means, and Simulated Annealing TSP:
+Run the test suite to verify Size-Balanced K-Means, Simulated Annealing TSP, and Adaptive Grid Partitioning:
 
 ```bash
 pytest tests/
