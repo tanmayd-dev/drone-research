@@ -10,6 +10,7 @@ venv/
 ENV/
 build/
 dist/
+node_modules/
 *.egg-info/
 .eggs/
 
@@ -18,14 +19,28 @@ dist/
 .idea/
 *.swp
 *.swo
+*.tsbuildinfo
 
 # Python cache and logs
 *.log
 
-# Data files - large CSVs and JSONs likely generated or outputs
+# Data files - large CSVs and generated results
 *.csv
-*.json
 *results*.csv
+
+# Un-ignore project config JSONs
+!package*.json
+!tsconfig*.json
+!web/**/*.json
+
+# Neural network model weights
+*.pth
+*.pt
+*.onnx
+
+# Academic manuscripts, TeX sources and PDFs
+*.tex
+*.pdf
 
 # Simulation output directories (if generated)
 external_mode/simulations/
