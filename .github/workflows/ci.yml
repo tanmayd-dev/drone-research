@@ -35,7 +35,9 @@ jobs:
         run: pip install pytest
 
       - name: Run unit tests
-        run: pytest tests/
+        env:
+          PYTHONPATH: .
+        run: python -m pytest tests/
 
   web-build:
     name: Web Application Build Check

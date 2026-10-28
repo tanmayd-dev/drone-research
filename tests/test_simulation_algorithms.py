@@ -2,6 +2,10 @@
 Unit tests for A* Obstacle Avoidance, Size-Balanced K-Means, and Simulated Annealing TSP.
 """
 
+import sys
+import os
+sys.path.insert(0, os.path.abspath(os.path.join(os.path.dirname(__file__), "..")))
+
 import pytest
 import math
 from simulation.common.astar import AStarPathfinder, circle_line_intersect
